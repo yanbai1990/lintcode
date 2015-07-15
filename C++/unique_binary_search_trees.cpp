@@ -1,6 +1,43 @@
 class Solution1 {
 public:
     /**
+     * catalan number
+     *
+     * @paramn n: An integer
+     * @return: An integer
+     */
+    unordered_map<int, int> map;
+    int numTrees(int n) {
+        // write your code here
+        if(n==0 || n==1) return 1;
+        int sum=0;
+        for(int m=1; m<=n; ++m) {
+            int leftVal = 1;
+            int rightVal = 1;
+            if(map.find(m-1) != map.end())
+                leftVal= map[m-1];
+            else
+            {
+                leftVal = numTrees(m-1);
+                map[m-1] = leftVal;
+            }
+            if(map.find(n-m) != map.end())
+                rightVal = map[n-m];
+            else
+            {
+                rightVal = numTrees(n-m);
+                map[n-m] = rightVal;
+            }
+            
+            sum+=leftVal*rightVal;
+        }
+        return sum;
+    }
+};
+
+class Solution2 {
+public:
+    /**
      * @paramn n: An integer
      * @return: An integer
      */
@@ -19,7 +56,7 @@ public:
     }
 };
 
-class Solution2 {
+class Solution3 {
 public:
     /**
      * catalan number
