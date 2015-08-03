@@ -1,72 +1,36 @@
-/**
- * Definition of Interval:
- * classs Interval {
- *     int start, end;
- *     Interval(int start, int end) {
- *         this->start = start;
- *         this->end = end;
- *     }
- */
-class SegmentTreeSumNode {
-public:
-    int start, end;
-    long long sum;
-    SegmentTreeSumNode *left, *right;
-    SegmentTreeSumNode() {}
-    SegmentTreeSumNode(int s, int e, long long t) : start(s), end(e), sum(t), left(nullptr), right(nullptr) {}
-};
-
 class Solution {
 public:
-    /**
-     *@param A, queries: Given an integer array and an query list
-     *@return: The result list
+    /*
+     * param k : description of k
+     * param nums : description of array and index 0 ~ n-1
+     * return: description of return
      */
-    vector<long long> intervalSum(vector<int> &A, vector<Interval> &queries) {
+    int kthLargestElement(int k, vector<int> nums) {
         // write your code here
-        vector<long long> result;
+        const int n=nums.size();
         
-        SegmentTreeSumNode *root=build(A, 0, A.size()-1);
+        quickSort(nums, 0, n-1);
         
-        for(const auto interval:queries) {
-            result.push_back(query(root, interval.start, interval.end));
-        }
-        
-        return result;
+        return nums[n-k];
     }
     
-    SegmentTreeSumNode *build(vector<int> &A, int start, int end) {
-        if(start>end) return nullptr;
-        
-        SegmentTreeSumNode *root=new SegmentTreeSumNode(start, end, 0);
-        if(start==end) {
-            root->sum=A[start];
-            return root;
+    void quickSort(vector<int> &nums, int start, int end) {
+        if(start<end) {
+            int pivot=partition(nums, start, end);
+            quickSort(nums, start, pivot-1);
+            quickSort(nums, pivot+1, end);
         }
-        
-        root->left=build(A, start, (start+end)/2);
-        root->right=build(A, (start+end)/2+1, end);
-        
-        long long left=root->left==nullptr?0:root->left->sum;
-        long long right=root->right==nullptr?0:root->right->sum;
-        
-        root->sum=left+right;
-        
-        return root;
     }
     
-    long long query(SegmentTreeSumNode *root, int start, int end) {
-        if(root==nullptr || start>root->end || end<root->start) {
-            return 0;
+    int partition(vector<int> &nums, int start, int end) {
+        int x=end;
+        int i=start-1, j=start;
+        for( ; j<end; j++) {
+            if(nums[j]<=nums[x]) {
+                swap(nums[++i], nums[j]);
+            }
         }
-        
-        if(start<=root->start && root->end<=end) {
-            return root->sum;
-        }
-        
-        long long left=query(root->left, start, end);
-        long long right=query(root->right, start, end);
-        
-        return left+right;
+        swap(nums[i+1], nums[x]);
+        return i+1;
     }
 };
